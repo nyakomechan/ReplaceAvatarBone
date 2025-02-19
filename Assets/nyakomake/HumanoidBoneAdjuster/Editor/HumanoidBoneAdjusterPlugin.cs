@@ -24,16 +24,13 @@ namespace nyakomake
                     var humanoidBoneAdjusters = ctx.AvatarRootObject.GetComponentsInChildren<HumanoidBoneAdjuster>();
                     if (humanoidBoneAdjusters != null && humanoidBoneAdjusters.Length > 0)
                     {
-                        //ApplyChangePosRotHumanBone(ctx.AvatarRootObject, humanoidBoneAdjusters);
                         foreach (HumanoidBoneAdjuster bone in humanoidBoneAdjusters)
                         {
                             bone.ApplyChangePosRotHumanBone();
                         }
                         Avatar avatar = CreateHumanoidBoneAdjustAvatar(ctx.AvatarRootObject, humanoidBoneAdjusters);
                         if (avatar == null) Debug.Log("avatar is null!");
-                        //AssetDatabase.CreateAsset(avatar, "Assets/nyakomake/HumanoidBoneAdjuster/" + ctx.AvatarRootObject.name + "_remap.asset");
-                        //AssetDatabase.SaveAssets();
-                        //ctx.AvatarRootObject.GetComponent<Animator>().avatar = (Avatar)AssetDatabase.LoadAssetAtPath("Assets/nyakomake/HumanoidBoneAdjuster/" + ctx.AvatarRootObject.name + "_remap.asset", typeof(Avatar));
+
                         ctx.AssetSaver.SaveAsset(avatar);
                         DestroyImmediate(ctx.AvatarRootObject.GetComponent<Animator>());
                         ctx.AvatarRootObject.AddComponent<Animator>();
@@ -61,8 +58,8 @@ namespace nyakomake
             var sourceObject_clone = Instantiate(sourceObject);
             listbone(sourceObject_clone);
             ExecuteDeleteObjectWithoutList(sourceObject_clone.transform);
-            HumanoidAvatarRemapper humanoidAvatarRemapper = new HumanoidAvatarRemapper();
-            humanoidAvatarRemapper.SetAvatarObj(sourceObject_clone);
+            HumanoidAvatarBuilder HumanoidAvatarBuilder = new HumanoidAvatarBuilder();
+            HumanoidAvatarBuilder.SetAvatarObj(sourceObject_clone);
 
             List<ChangePosRotHumanBone> changePosRotHumanBones_ = new List<ChangePosRotHumanBone>();
             foreach (HumanoidBoneAdjuster bone in humanoidBoneAdjusters)
@@ -72,7 +69,7 @@ namespace nyakomake
                 bone_.humanBodyBones = bone.humanBodyBones;
                 changePosRotHumanBones_.Add(bone_);
             }
-            Avatar remapAvatar = humanoidAvatarRemapper.CreateBonePosRotChangeAvatar(changePosRotHumanBones_);
+            Avatar remapAvatar = HumanoidAvatarBuilder.CreateBonePosRotChangeAvatar(changePosRotHumanBones_);
             DestroyImmediate(sourceObject_clone);
             return remapAvatar;
 

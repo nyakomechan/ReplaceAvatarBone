@@ -30,17 +30,7 @@ namespace nyakomake
             refPosRotTransform = transform;
         }
 
-        // Start is called before the first frame update
-        void Start()
-        {
 
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
         [ContextMenu("GetRootObject")]
         GameObject GetRootObject()
         {
@@ -60,9 +50,7 @@ namespace nyakomake
             Animator animator = rootObject.GetComponent<Animator>();
 
             Transform boneTransform = animator.GetBoneTransform(humanBodyBones);
-            // if (adjustType == AdjustType.RotationOnly) boneTransform.SetPositionAndRotation(boneTransform.position, transform.rotation);
-            // if (adjustType == AdjustType.PositionOnly) boneTransform.SetPositionAndRotation(transform.position, boneTransform.rotation);
-            // else boneTransform.SetPositionAndRotation(transform.position, transform.rotation);
+
             if (adjustType == AdjustType.RotationOnly)
             {
                 boneTransform.rotation = new Quaternion(transform.rotation.x,transform.rotation.y,transform.rotation.z,transform.rotation.w);
