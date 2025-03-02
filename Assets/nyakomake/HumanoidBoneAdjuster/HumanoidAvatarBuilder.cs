@@ -30,12 +30,12 @@ namespace nyakomake
         private Avatar _baseAvatar;
 
 
-        private float _heightOffset = 0;
+        //private float _heightOffset = 0;
 
 
 
 
-        private float _hipsHeightOffset = 0;
+        //private float _hipsHeightOffset = 0;
 
 
         #region ### ボーンへの参照 ###
@@ -117,7 +117,7 @@ namespace nyakomake
 
 
 
-        public Avatar CreateBonePosRotChangeAvatar(List<ChangePosRotHumanBone> changePosRotHumanBone)
+        public Avatar CreateBonePosRotChangeAvatar(List<ChangePosRotHumanBone> changePosRotHumanBone,out float eyeYOffset)
         {
             //CacheBoneNameMap(BoneNameConvention.FBX, _assetName);
             if (_baseAvatar == null) SetBaseAvatarAsset();
@@ -129,7 +129,7 @@ namespace nyakomake
             SetupSkeletonDic();
             SetupBones_PosRotChange(changePosRotHumanBone);
             ReadAvatar();
-            BuildRemapAvatar();
+            BuildRemapAvatar(out eyeYOffset);
             return _srcAvatar;
             //SetupLineRenderers();
         }
@@ -145,7 +145,7 @@ namespace nyakomake
                 if (hb.humanName == "Hips")
                 {
                     hipsBoneName = hb.boneName;
-                    Debug.Log(hipsBoneName);
+                    //Debug.Log(hipsBoneName);
                 }
             }
 
@@ -166,7 +166,7 @@ namespace nyakomake
 
         Transform RecursiveTransformFind(Transform current, string name)
         {
-            Debug.Log(current.name);
+            //Debug.Log(current.name);
             if (current.name == name) return current;
             Transform tr = null;
             for (int i = 0; i < current.childCount; i++)
@@ -199,8 +199,8 @@ namespace nyakomake
             //humanBonesの名前をキーにして_skeletonBonesからTransformをもってくる
             foreach (var hb in basehumanBones)
             {
-                //Debug.Log(hb.humanName);
-                //Debug.Log(hb.boneName);
+                ////Debug.Log(hb.humanName);
+                ////Debug.Log(hb.boneName);
                 if (_transformDefinision.ContainsKey(hb.humanName))
                 {
                     if (_transformDefinision[hb.humanName] != "") continue;
@@ -232,7 +232,7 @@ namespace nyakomake
                 {
                     _transformDefinision[HumanTrait.BoneName[(int)bone.humanBodyBones]] = animator.GetBoneTransform(bone.humanBodyBones).name;
                     changePosRotBoneNames.Add(animator.GetBoneTransform(bone.humanBodyBones).name);
-                    Debug.Log("changePosRotBoneName : " + animator.GetBoneTransform(bone.humanBodyBones).name);
+                    //Debug.Log("changePosRotBoneName : " + animator.GetBoneTransform(bone.humanBodyBones).name);
                 }
             }
 
@@ -298,7 +298,7 @@ namespace nyakomake
         /// <summary>
         /// アバターのセットアップ
         /// </summary>
-        private void BuildRemapAvatar()
+        private void BuildRemapAvatar(out float eyeYOffset)
         {
             _srcAvatar = null;
             string[] humanTraitBoneNames = HumanTrait.BoneName;
@@ -324,11 +324,8 @@ namespace nyakomake
             }
 
             string hipBoneName = "";
-            string leftEyeBoneName = "";
-            string headBoneName = "";
-            Transform hipTransform = _hips;
-            Transform leftEyeTransform = _leftEye;
-            Transform headTransform = _head;
+            string leftToesBoneName = "";
+
 
             List<HumanBone> humanBones = new List<HumanBone>(humanTraitBoneNames.Length);
             for (int i = 0; i < humanTraitBoneNames.Length; i++)
@@ -340,10 +337,10 @@ namespace nyakomake
                 {
                     HumanBone humanBone = new HumanBone();
                     humanBone.humanName = humanBoneName;
-                    Debug.Log(humanBoneName);
+                    Debug.Log("humanTraitBoneName  "+humanBoneName);
                     if ((bone == null))
                     {
-                        Debug.Log(humanBoneName);
+                        Debug.Log("humanTraitBoneName  is null "+humanBoneName);
                         continue;
                     }
 
@@ -362,39 +359,65 @@ namespace nyakomake
 
                     humanBones.Add(humanBone);
 
-                    if (humanBoneName == "Hips") hipBoneName = bone;
-                    if (leftEyeBoneName == "LeftEye") leftEyeBoneName = bone;
-                    if (headBoneName == "Head") headBoneName = bone;
+                    if (humanBoneName == "Hips") 
+                    {
+                        hipBoneName = bone;
+                        Debug.Log("hipBoneName " +bone);
+                    }
+                    if (humanBoneName == "LeftToes") 
+                    {
+                        leftToesBoneName = bone;
+                        Debug.Log("leftToesBoneName " +bone);
+                        }
                 }
             }
+            Debug.Log("humanBones " +humanBones.Count);
 
             List<SkeletonBone> skeletonBones = new List<SkeletonBone>(_skeletonBones.Count + 1);
 
+
+            float hipYPos = 0;
+            float leftToeLerfYPos = 0;
+            float rootYPos = 0;
+            for (int i = 0; i < _skeletonBones.Count; i++)
+            {
+                Transform bone = _skeletonBones[i];
+                if (bone.name == hipBoneName)
+                {
+                    Debug.Log("hipYPos " +bone.position.y);
+                    hipYPos = bone.position.y;
+                    rootYPos = bone.parent.position.y;
+                }
+                else if (bone.name == leftToesBoneName)
+                {
+                    if(bone.childCount == 0)leftToeLerfYPos = bone.position.y;
+                    else leftToeLerfYPos = bone.GetChild(0).transform.position.y;
+                    Debug.Log("leftToeLerfYPos " +bone.position.y);
+                }
+            }
+            float hipsY= hipYPos - leftToeLerfYPos;
+            eyeYOffset = rootYPos- leftToeLerfYPos;
+            Debug.Log("eyeYOffset : "+eyeYOffset);
+
             //bool isAvatarHeightSetting = false;
-            Debug.Log("changePosRotBoneNames");
+            //Debug.Log("changePosRotBoneNames");
             foreach (string str in changePosRotBoneNames)
             {
-                Debug.Log("changePosRotBoneNames : " + str);
+                //Debug.Log("changePosRotBoneNames : " + str);
             }
-            Debug.Log("skeletonSetup ");
+            //Debug.Log("skeletonSetup ");
 
             for (int i = 0; i < _skeletonBones.Count; i++)
             {
                 Transform bone = _skeletonBones[i];
-
-                if (bone.name == hipBoneName) hipTransform = bone;
-                if (bone.name == leftEyeBoneName) leftEyeTransform = bone;
-                if (bone.name == headBoneName) headTransform = bone;
-
                 SkeletonBone skelBone = new SkeletonBone();
                 skelBone.name = bone.name;
-                Debug.Log(bone.name);
+                ////Debug.Log(bone.name);
                 if (changePosRotBoneNames.Contains(bone.name))
                 {
                     skelBone.position = bone.localPosition;
                     skelBone.rotation = bone.localRotation;
                     skelBone.scale = bone.localScale;
-                    Debug.Log("changePosRotBone is " + bone.name);
                 }
                 else if (baseSkeltonBonesDic.ContainsKey(bone.name))
                 {
@@ -407,7 +430,7 @@ namespace nyakomake
                             {
                                 //skelBone.position = baseSkeltonBonesDic[bone.name].position + new Vector3(0, _heightOffset, 0);
                                 skelBone.position = baseSkeltonBonesDic[bone.name].position;
-                                Debug.Log("set height " + skelBone.name);
+                                //Debug.Log("set height " + skelBone.name);
                                 isAvatarHeightSetting = true;
                                 break;
                             }
@@ -422,15 +445,8 @@ namespace nyakomake
 
                     if (bone.name == hipBoneName)
                     {
-                        float hipsYOffset = 0;
-                        if (_leftToes != null && _rightToes != null)
-                        {
-                            hipsYOffset = _leftToes.position.y - _root.position.y;
-                        }
-
-                        skelBone.position = baseSkeltonBonesDic[bone.name].position
-                                            + Quaternion.Inverse(baseSkeltonBonesDic[bone.name].rotation) * new Vector3(0, -hipsYOffset + _hipsHeightOffset, 0);
-                        Debug.Log("Height offset is " + (hipsYOffset + _hipsHeightOffset));
+                        skelBone.position = Quaternion.Inverse(baseSkeltonBonesDic[bone.name].rotation) * new Vector3(0,hipsY, 0);
+                        //Debug.Log("Height offset is " + (hipsYOffset + _hipsHeightOffset));
                     }
                     else
                     {
@@ -463,11 +479,11 @@ namespace nyakomake
 
             _srcAvatar = AvatarBuilder.BuildHumanAvatar(_avatar, humanDesc);
             _srcAvatar.name = "AvatarSystem";
-            if (_srcAvatar == null) Debug.Log("srcavatar is null!");
+            if (_srcAvatar == null) //Debug.Log("srcavatar is null!");
 
             if (!_srcAvatar.isValid || !_srcAvatar.isHuman)
             {
-                Debug.LogError("setup error");
+                //Debug.LogError("setup error");
                 return;
             }
 

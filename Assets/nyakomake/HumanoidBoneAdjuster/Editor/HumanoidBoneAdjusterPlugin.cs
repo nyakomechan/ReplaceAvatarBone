@@ -7,6 +7,7 @@ using nyakomake;
 using System;
 using System.Linq;
 using UnityEditor;
+using VRC.SDKBase;
 [assembly: ExportsPlugin(typeof(HumanoidBoneAdjusterPlugin))]
 
 namespace nyakomake
@@ -17,10 +18,10 @@ namespace nyakomake
         {
             InPhase(BuildPhase.Transforming)
                 .BeforePlugin("nadena.dev.modular-avatar")
-                .Run("Do something", ctx =>
+                .Run("nyakomake.humanoidBoneAdjuster", ctx =>
                 {
-                    Transform boneTransform =  ctx.AvatarRootObject.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.LeftLowerLeg);
-                    boneTransform.position = new Vector3(boneTransform.position.x, boneTransform.position.y-1f,boneTransform.position.z);
+                    //Transform boneTransform =  ctx.AvatarRootObject.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.LeftLowerLeg);
+                    //boneTransform.position = new Vector3(boneTransform.position.x, boneTransform.position.y-1f,boneTransform.position.z);
                     var humanoidBoneAdjusters = ctx.AvatarRootObject.GetComponentsInChildren<HumanoidBoneAdjuster>();
                     if (humanoidBoneAdjusters != null && humanoidBoneAdjusters.Length > 0)
                     {
@@ -28,17 +29,25 @@ namespace nyakomake
                         {
                             bone.ApplyChangePosRotHumanBone();
                         }
-                        Avatar avatar = CreateHumanoidBoneAdjustAvatar(ctx.AvatarRootObject, humanoidBoneAdjusters);
-                        if (avatar == null) Debug.Log("avatar is null!");
+                        float eyeYOffset;
+                        Avatar avatar = CreateHumanoidBoneAdjustAvatar(ctx.AvatarRootObject, humanoidBoneAdjusters,out eyeYOffset);
+                        if (avatar == null) //Debug.Log("avatar is null!");
 
                         ctx.AssetSaver.SaveAsset(avatar);
                         DestroyImmediate(ctx.AvatarRootObject.GetComponent<Animator>());
                         ctx.AvatarRootObject.AddComponent<Animator>();
                         ctx.AvatarRootObject.GetComponent<Animator>().applyRootMotion = true;
                         ctx.AvatarRootObject.GetComponent<Animator>().avatar = avatar;
-                    }
-                    
 
+                        Vector3 viewPos = ctx.AvatarRootObject.GetComponent<VRC_AvatarDescriptor>().ViewPosition;
+
+                        ctx.AvatarRootObject.GetComponent<VRC_AvatarDescriptor>().ViewPosition = new Vector3(viewPos.x, viewPos.y+eyeYOffset, viewPos.z);
+                    }
+
+                    foreach (HumanoidBoneAdjuster humanoidBoneAdjuster in humanoidBoneAdjusters)
+                    {
+                        DestroyImmediate(humanoidBoneAdjuster);
+                    }
                 });
         }
 
@@ -53,13 +62,13 @@ namespace nyakomake
         //List<Transform> transformsToKeep;
 
         //public HumanoidBoneAdjuster[] humanoidBoneAdjusters;
-        Avatar CreateHumanoidBoneAdjustAvatar(GameObject sourceObject, HumanoidBoneAdjuster[] humanoidBoneAdjusters)
+        Avatar CreateHumanoidBoneAdjustAvatar(GameObject sourceObject, HumanoidBoneAdjuster[] humanoidBoneAdjusters,out float eyeYOffset)
         {
             var sourceObject_clone = Instantiate(sourceObject);
             listbone(sourceObject_clone);
             ExecuteDeleteObjectWithoutList(sourceObject_clone.transform);
-            HumanoidAvatarBuilder HumanoidAvatarBuilder = new HumanoidAvatarBuilder();
-            HumanoidAvatarBuilder.SetAvatarObj(sourceObject_clone);
+            HumanoidAvatarBuilder humanoidAvatarBuilder = new HumanoidAvatarBuilder();
+            humanoidAvatarBuilder.SetAvatarObj(sourceObject_clone);
 
             List<ChangePosRotHumanBone> changePosRotHumanBones_ = new List<ChangePosRotHumanBone>();
             foreach (HumanoidBoneAdjuster bone in humanoidBoneAdjusters)
@@ -69,7 +78,8 @@ namespace nyakomake
                 bone_.humanBodyBones = bone.humanBodyBones;
                 changePosRotHumanBones_.Add(bone_);
             }
-            Avatar remapAvatar = HumanoidAvatarBuilder.CreateBonePosRotChangeAvatar(changePosRotHumanBones_);
+            eyeYOffset = 0f;
+            Avatar remapAvatar = humanoidAvatarBuilder.CreateBonePosRotChangeAvatar(changePosRotHumanBones_,out eyeYOffset);
             DestroyImmediate(sourceObject_clone);
             return remapAvatar;
 
@@ -87,9 +97,9 @@ namespace nyakomake
                 {
 
                     boneTransform.SetPositionAndRotation(bone.refPosRotTransform.position, bone.refPosRotTransform.rotation);
-                    Debug.Log("adjust : " + bone.refPosRotTransform.name);
-                    Debug.Log("adjustBone : " + boneTransform.name);
-                    Debug.Log("adjustPos : " + boneTransform.position.x + "," + boneTransform.position.y + "," + boneTransform.position.z);
+                    //Debug.Log("adjust : " + bone.refPosRotTransform.name);
+                    //Debug.Log("adjustBone : " + boneTransform.name);
+                    //Debug.Log("adjustPos : " + boneTransform.position.x + "," + boneTransform.position.y + "," + boneTransform.position.z);
                 }
             }
         }
@@ -134,7 +144,7 @@ namespace nyakomake
 
             if (animator == null || animator.avatar == null || !animator.avatar.isValid)
             {
-                Debug.LogError("指定されたGameObjectに有効なAnimatorとAvatarが設定されていません。");
+                //Debug.LogError("指定されたGameObjectに有効なAnimatorとAvatarが設定されていません。");
                 return boneMap;
             }
 
@@ -150,7 +160,7 @@ namespace nyakomake
                 }
                 else
                 {
-                    Debug.LogWarning($"Humanoidボーン {bone} は見つかりませんでした。");
+                    //Debug.LogWarning($"Humanoidボーン {bone} は見つかりませんでした。");
                 }
 
             }
@@ -164,7 +174,7 @@ namespace nyakomake
 
             if (animator == null || animator.avatar == null || !animator.avatar.isValid)
             {
-                Debug.LogError("指定されたGameObjectに有効なAnimatorとAvatarが設定されていません。");
+                //Debug.LogError("指定されたGameObjectに有効なAnimatorとAvatarが設定されていません。");
                 return boneMap;
             }
 
@@ -180,7 +190,7 @@ namespace nyakomake
                 }
                 else
                 {
-                    Debug.LogWarning($"Humanoidボーン {bone} は見つかりませんでした。");
+                    //Debug.LogWarning($"Humanoidボーン {bone} は見つかりませんでした。");
                 }
 
             }
@@ -193,14 +203,14 @@ namespace nyakomake
         {
             if (boneMap.Count == 0)
             {
-                Debug.Log("マッピングされたボーンがありません。");
+                //Debug.Log("マッピングされたボーンがありません。");
                 return;
             }
 
-            Debug.Log("--- Bone Mappings ---");
+            //Debug.Log("--- Bone Mappings ---");
             foreach (KeyValuePair<HumanBodyBones, Transform> pair in boneMap)
             {
-                Debug.Log($"{pair.Key}: {pair.Value.name} (Path: {GetTransformPath(pair.Value)})");
+                //Debug.Log($"{pair.Key}: {pair.Value.name} (Path: {GetTransformPath(pair.Value)})");
             }
         }
 
@@ -235,7 +245,7 @@ namespace nyakomake
             keepTransforms_ = keepTransforms_.Distinct().ToList();
             foreach (Transform keepTransform in keepTransforms_)
             {
-                Debug.Log(keepTransform.name);
+                //Debug.Log(keepTransform.name);
             }
             List<Transform> childTransforms = GetAllChildren(rootObj);
             foreach (Transform childTransform in childTransforms)
@@ -253,7 +263,7 @@ namespace nyakomake
             for (int i = parent.childCount - 1; i > 0; i--)
             {
                 var child = parent.GetChild(i);
-                Debug.Log(child.name);
+                //Debug.Log(child.name);
                 if (keepTransforms.Contains(child)) isKeep = isKeep || true;
                 var isChildKeep = false;
                 DeleteObjectWithoutList(child, ref isChildKeep);

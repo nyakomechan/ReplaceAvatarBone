@@ -5,7 +5,6 @@ using System.Linq;
 using UnityEditor;
 using System;
 using VRC.SDKBase;
-
 namespace nyakomake
 {
     public class HumanoidBoneAdjuster : MonoBehaviour, IEditorOnly
@@ -22,7 +21,6 @@ namespace nyakomake
         public HumanBodyBones humanBodyBones;
         public Transform refPosRotTransform;
         public AdjustType adjustType;
-
 
 
         void Reset()
@@ -65,8 +63,8 @@ namespace nyakomake
                 boneTransform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z);
             }
 
-            Debug.Log("adjustBone : " + boneTransform.name);
-            Debug.Log("adjustPos : " + boneTransform.position.x + "," + boneTransform.position.y + "," + boneTransform.position.z);
+            //Debug.Log("adjustBone : " + boneTransform.name);
+            //Debug.Log("adjustPos : " + boneTransform.position.x + "," + boneTransform.position.y + "," + boneTransform.position.z);
 
         }
         [ContextMenu("RevertChangePosRotHumanBone")]
@@ -84,6 +82,7 @@ namespace nyakomake
         }
         void RevertPosRotTransform(Transform revertTransform)
         {
+            #if UNITY_EDITOR
             SerializedObject serializedObject = new SerializedObject(revertTransform);
             SerializedProperty sp = serializedObject.FindProperty("m_LocalPosition");
             sp.prefabOverride = false;
@@ -91,6 +90,7 @@ namespace nyakomake
             sp = serializedObject.FindProperty("m_LocalRotation");
             sp.prefabOverride = false;
             sp.serializedObject.ApplyModifiedProperties();
+            #endif
         }
     }
 }
