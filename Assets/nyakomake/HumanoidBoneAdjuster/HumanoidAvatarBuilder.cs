@@ -53,7 +53,7 @@ namespace nyakomake
 
         //_baseAvatarを元に_avatarオブジェクトからHipsボーンの親（Armatureオブジェクト）を引っ張ってくる
 
-        [ContextMenu("Find hips")]
+        //[ContextMenu("Find hips")]
         public void SetRoot()
         {
             HumanBone[] basehumanBones = _baseAvatar.humanDescription.human;
@@ -108,7 +108,6 @@ namespace nyakomake
         {
             HumanBone[] basehumanBones = _baseAvatar.humanDescription.human;
 
-            //humanBonesの名前をキーにして_skeletonBonesからTransformをもってくる
             foreach (var hb in basehumanBones)
             {
 
@@ -123,7 +122,7 @@ namespace nyakomake
 
         }
 
-
+        //HumanBone構成用辞書の_transformDefinisionのセットアップ
         public List<string> changePosRotBoneNames = new List<string>();
         private void SetupBones_PosRotChange(List<ChangePosRotHumanBone> changePosRotHumanBones)
         {
