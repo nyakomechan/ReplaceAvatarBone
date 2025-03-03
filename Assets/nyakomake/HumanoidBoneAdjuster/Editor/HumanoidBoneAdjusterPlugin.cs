@@ -20,8 +20,6 @@ namespace nyakomake
                 .BeforePlugin("nadena.dev.modular-avatar")
                 .Run("nyakomake.humanoidBoneAdjuster", ctx =>
                 {
-                    //Transform boneTransform =  ctx.AvatarRootObject.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.LeftLowerLeg);
-                    //boneTransform.position = new Vector3(boneTransform.position.x, boneTransform.position.y-1f,boneTransform.position.z);
                     var humanoidBoneAdjusters = ctx.AvatarRootObject.GetComponentsInChildren<HumanoidBoneAdjuster>();
                     if (humanoidBoneAdjusters != null && humanoidBoneAdjusters.Length > 0)
                     {
@@ -30,10 +28,10 @@ namespace nyakomake
                             bone.ApplyChangePosRotHumanBone();
                         }
                         float eyeYOffset;
-                        Avatar avatar = CreateHumanoidBoneAdjustAvatar(ctx.AvatarRootObject, humanoidBoneAdjusters,out eyeYOffset);
+                        Avatar avatar = CreateHumanoidBoneAdjustAvatar(ctx.AvatarRootObject, humanoidBoneAdjusters, out eyeYOffset);
                         if (avatar == null) //Debug.Log("avatar is null!");
 
-                        ctx.AssetSaver.SaveAsset(avatar);
+                            ctx.AssetSaver.SaveAsset(avatar);
                         DestroyImmediate(ctx.AvatarRootObject.GetComponent<Animator>());
                         ctx.AvatarRootObject.AddComponent<Animator>();
                         ctx.AvatarRootObject.GetComponent<Animator>().applyRootMotion = true;
@@ -41,7 +39,7 @@ namespace nyakomake
 
                         Vector3 viewPos = ctx.AvatarRootObject.GetComponent<VRC_AvatarDescriptor>().ViewPosition;
 
-                        ctx.AvatarRootObject.GetComponent<VRC_AvatarDescriptor>().ViewPosition = new Vector3(viewPos.x, viewPos.y+eyeYOffset, viewPos.z);
+                        ctx.AvatarRootObject.GetComponent<VRC_AvatarDescriptor>().ViewPosition = new Vector3(viewPos.x, viewPos.y + eyeYOffset, viewPos.z);
                     }
 
                     foreach (HumanoidBoneAdjuster humanoidBoneAdjuster in humanoidBoneAdjusters)
@@ -51,22 +49,12 @@ namespace nyakomake
                 });
         }
 
-        // public struct ChangePosRotHumanBone_isRotOnly
-        // {
-        //     public HumanBodyBones humanBodyBones;
-        //     public Transform refPosRotTransform;
-        //     public bool isRotOnly;
-        // }
-
-        //public GameObject sourceObject;
-        //List<Transform> transformsToKeep;
-
-        //public HumanoidBoneAdjuster[] humanoidBoneAdjusters;
-        Avatar CreateHumanoidBoneAdjustAvatar(GameObject sourceObject, HumanoidBoneAdjuster[] humanoidBoneAdjusters,out float eyeYOffset)
+        Avatar CreateHumanoidBoneAdjustAvatar(GameObject sourceObject, HumanoidBoneAdjuster[] humanoidBoneAdjusters, out float eyeYOffset)
         {
             var sourceObject_clone = Instantiate(sourceObject);
-            listbone(sourceObject_clone);
-            ExecuteDeleteObjectWithoutList(sourceObject_clone.transform);
+            //istbone(sourceObject_clone);
+            var humanoidBoneListInObject = GetMappedBoneList(sourceObject_clone);
+            ExecuteDeleteObjectWithoutList(sourceObject_clone.transform,humanoidBoneListInObject);
             HumanoidAvatarBuilder humanoidAvatarBuilder = new HumanoidAvatarBuilder();
             humanoidAvatarBuilder.SetAvatarObj(sourceObject_clone);
 
@@ -79,72 +67,27 @@ namespace nyakomake
                 changePosRotHumanBones_.Add(bone_);
             }
             eyeYOffset = 0f;
-            Avatar remapAvatar = humanoidAvatarBuilder.CreateBonePosRotChangeAvatar(changePosRotHumanBones_,out eyeYOffset);
+            Avatar remapAvatar = humanoidAvatarBuilder.CreateBonePosRotChangeAvatar(changePosRotHumanBones_, out eyeYOffset);
             DestroyImmediate(sourceObject_clone);
             return remapAvatar;
 
         }
 
-        public void ApplyChangePosRotHumanBone(GameObject sourceObject, HumanoidBoneAdjuster[] humanoidBoneAdjusters)
-        {
-            Animator animator = sourceObject.GetComponent<Animator>();
-            foreach (HumanoidBoneAdjuster bone in humanoidBoneAdjusters)
-            {
-                Transform boneTransform = animator.GetBoneTransform(bone.humanBodyBones);
-                if (bone.adjustType == HumanoidBoneAdjuster.AdjustType.RotationOnly) boneTransform.SetPositionAndRotation(boneTransform.position, bone.refPosRotTransform.rotation);
-                if (bone.adjustType == HumanoidBoneAdjuster.AdjustType.PositionOnly) boneTransform.SetPositionAndRotation(bone.refPosRotTransform.position, boneTransform.rotation);
-                else
-                {
 
-                    boneTransform.SetPositionAndRotation(bone.refPosRotTransform.position, bone.refPosRotTransform.rotation);
-                    //Debug.Log("adjust : " + bone.refPosRotTransform.name);
-                    //Debug.Log("adjustBone : " + boneTransform.name);
-                    //Debug.Log("adjustPos : " + boneTransform.position.x + "," + boneTransform.position.y + "," + boneTransform.position.z);
-                }
-            }
-        }
-        public void RevertChangePosRotHumanBone(GameObject sourceObject)
-        {
-            Animator animator = sourceObject.GetComponent<Animator>();
-            var humanBodyBonesList = (HumanBodyBones[])Enum.GetValues(typeof(HumanBodyBones));
-            foreach (HumanBodyBones bone in humanBodyBonesList)
-            {
-                if (bone == HumanBodyBones.LastBone) continue;
-                Transform boneTransform = animator.GetBoneTransform(bone);
-                if (boneTransform != null)
-                {
-                    RevertPosRotTransform(boneTransform);
-                }
-            }
-        }
-        void RevertPosRotTransform(Transform revertTransform)
-        {
-            SerializedObject serializedObject = new SerializedObject(revertTransform);
-            SerializedProperty sp = serializedObject.FindProperty("m_LocalPosition");
-            sp.prefabOverride = false;
-            sp.serializedObject.ApplyModifiedProperties();
-            sp = serializedObject.FindProperty("m_LocalRotation");
-            sp.prefabOverride = false;
-            sp.serializedObject.ApplyModifiedProperties();
-        }
+        // void listbone(GameObject sourceObj)
+        // {
+        //     LogMappedBones(GetMappedBoneDic(sourceObj));
+        //     keepTransforms = GetMappedBoneList(sourceObj);
+        // }
 
-        [ContextMenu("List Avatar Objects")]
-        void listbone(GameObject sourceObj)
-        {
-            //keepTransforms.Clear();
-            //keepTransforms.AddRange(transformsToKeep);
-            LogMappedBones(GetMappedBones(sourceObj));
-            keepTransforms = GetMappedBones2(sourceObj);
-        }
-
-        public static Dictionary<HumanBodyBones, Transform> GetMappedBones(GameObject targetObject)
+        public static Dictionary<HumanBodyBones, Transform> GetMappedBoneDic(GameObject targetObject)
         {
             Dictionary<HumanBodyBones, Transform> boneMap = new Dictionary<HumanBodyBones, Transform>();
             Animator animator = targetObject.GetComponent<Animator>();
 
             if (animator == null || animator.avatar == null || !animator.avatar.isValid)
             {
-                //Debug.LogError("指定されたGameObjectに有効なAnimatorとAvatarが設定されていません。");
+                Debug.LogError("有効なAnimatorとAvatarが設定されていません。");
                 return boneMap;
             }
 
@@ -160,21 +103,21 @@ namespace nyakomake
                 }
                 else
                 {
-                    //Debug.LogWarning($"Humanoidボーン {bone} は見つかりませんでした。");
+                    Debug.Log($"Humanoidボーン {bone} は見つかりませんでした。");
                 }
 
             }
 
             return boneMap;
         }
-        public static List<Transform> GetMappedBones2(GameObject targetObject)
+        public static List<Transform> GetMappedBoneList(GameObject targetObject)
         {
             List<Transform> boneMap = new List<Transform>();
             Animator animator = targetObject.GetComponent<Animator>();
 
             if (animator == null || animator.avatar == null || !animator.avatar.isValid)
             {
-                //Debug.LogError("指定されたGameObjectに有効なAnimatorとAvatarが設定されていません。");
+                Debug.LogError("有効なAnimatorとAvatarが設定されていません。");
                 return boneMap;
             }
 
@@ -190,7 +133,7 @@ namespace nyakomake
                 }
                 else
                 {
-                    //Debug.LogWarning($"Humanoidボーン {bone} は見つかりませんでした。");
+                    Debug.Log($"Humanoidボーン {bone} は見つかりませんでした。");
                 }
 
             }
@@ -201,16 +144,16 @@ namespace nyakomake
 
         public static void LogMappedBones(Dictionary<HumanBodyBones, Transform> boneMap)
         {
+            Debug.Log("--- Bone Mappings ---");
             if (boneMap.Count == 0)
             {
-                //Debug.Log("マッピングされたボーンがありません。");
+                Debug.Log("マッピングされたボーンがありません。");
                 return;
             }
 
-            //Debug.Log("--- Bone Mappings ---");
             foreach (KeyValuePair<HumanBodyBones, Transform> pair in boneMap)
             {
-                //Debug.Log($"{pair.Key}: {pair.Value.name} (Path: {GetTransformPath(pair.Value)})");
+                Debug.Log($"{pair.Key}: {pair.Value.name} (Path: {GetTransformPath(pair.Value)})");
             }
         }
 
@@ -229,34 +172,34 @@ namespace nyakomake
             }
 
         }
-        private List<Transform> keepTransforms;
+        //private List<Transform> keepTransforms;
 
-        [ContextMenu("Delete List Objects")]
-        public void ExecuteDeleteObjectWithoutList(Transform rootObj)
+        void ExecuteDeleteObjectWithoutList(Transform rootObj,List<Transform> keepTransforms)
         {
-            List<Transform> keepTransforms_ = new List<Transform>();
+            List<Transform> keepTransforms_parentFix = new List<Transform>();
 
             foreach (Transform keepTransform in keepTransforms)
             {
-                keepTransforms_.Add(keepTransform);
+                keepTransforms_parentFix.Add(keepTransform);
                 var parentList = GetAllParent(keepTransform);
-                keepTransforms_ = keepTransforms_.Concat(parentList).ToList();
+                keepTransforms_parentFix = keepTransforms_parentFix.Concat(parentList).ToList();
             }
-            keepTransforms_ = keepTransforms_.Distinct().ToList();
-            foreach (Transform keepTransform in keepTransforms_)
+            keepTransforms_parentFix = keepTransforms_parentFix.Distinct().ToList();
+            foreach (Transform keepTransform in keepTransforms_parentFix)
             {
-                //Debug.Log(keepTransform.name);
+                Debug.Log(keepTransform.name);
             }
             List<Transform> childTransforms = GetAllChildren(rootObj);
             foreach (Transform childTransform in childTransforms)
             {
-                if (!keepTransforms_.Contains(childTransform))
+                if (!keepTransforms_parentFix.Contains(childTransform))
                 {
                     if (childTransform != null) DestroyImmediate(childTransform.gameObject);
                 }
             }
         }
 
+/*
         void DeleteObjectWithoutList(Transform parent, ref bool isKeep)
         {
 
@@ -274,7 +217,7 @@ namespace nyakomake
                 }
             }
         }
-
+*/
         public static List<Transform> GetAllChildren(Transform root)
         {
             List<Transform> children = new List<Transform>();

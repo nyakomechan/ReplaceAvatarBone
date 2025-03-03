@@ -5,7 +5,7 @@ using System.Linq;
 using VRC.SDKBase;
 using Anatawa12.AvatarOptimizer;
 
-#if UNITY_EDITOR
+
 [CustomEditor(typeof(RemoveMeshHelper))] // MonoBehaviourを継承したスクリプトにアタッチできるようにする
 public class RemoveMeshHelperEditor : Editor
 {
@@ -16,8 +16,6 @@ public class RemoveMeshHelperEditor : Editor
     RemoveMeshHelper removeMeshHelper;
     public override void OnInspectorGUI()
     {
-        //base.OnInspectorGUI(); // デフォルトのInspectorを表示
-
         EditorGUI.BeginChangeCheck();
 
         removeMeshHelper = (RemoveMeshHelper)target; // Inspectorに表示されているスクリプトのインスタンスを取得
@@ -67,9 +65,6 @@ public class RemoveMeshHelperEditor : Editor
                 SetRemoveMeshBox(removeMeshHelper, selectedRenderer.gameObject);
             }
 
-            // 選択されたSkinnedMeshRendererをDebug.Logで表示 (必要に応じて処理を変更)
-
-            //
 
         }
         else
@@ -85,6 +80,7 @@ public class RemoveMeshHelperEditor : Editor
 
     }
 
+　　//skinnedMeshコンポーネントを持つオブジェクトにRemoveMeshInBoxコンポーネントをアタッチしポリゴンを削除する箱状の範囲をセットする
     void SetRemoveMeshBox(RemoveMeshHelper removeMeshHelper, GameObject skinnedMeshObject)
     {
         
@@ -123,8 +119,6 @@ public class RemoveMeshHelperEditor : Editor
             removeMeshHelper.attachObject = selectedRenderer.gameObject;
             Debug.Log(message: "Selected SkinnedMeshRenderer: " + selectedRenderer.gameObject.name);
 
-            //SetRemoveMeshBox(removeMeshHelper,selectedRenderer.gameObject);
-
         }
     }
 
@@ -148,6 +142,8 @@ public class RemoveMeshHelperEditor : Editor
         }
         return rootObject;
     }
+
+    //ポリゴンを削除する箱状の範囲をエディタ上で表示する
     [DrawGizmo(GizmoType.Active)]
     static void DrawGizmo(RemoveMeshHelper scr, GizmoType gizmoType)
     {
@@ -160,27 +156,24 @@ public class RemoveMeshHelperEditor : Editor
 
         Gizmos.color = new Color(1, 0, 0, 0.5f);
         Gizmos.matrix = worldmatrix;
-        //Gizmos.DrawCube(position, scale);
         Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
         Debug.Log("OnDrawGizmosSelected");
     }
 
-    
+　　//ポリゴンを削除する箱状の範囲をエディタ上で編集するハンドルを表示する
     protected virtual void OnSceneGUI()
     {
         if(!isEditBoxMode)return;
         removeMeshHelper = (RemoveMeshHelper)target; 
         
 
-        EditorGUI.BeginChangeCheck();
-        //Vector3 newTargetPosition = Handles.PositionHandle(removeMeshHelper.removeMeshBox.Center+removeMeshHelper.transform.position, removeMeshHelper.transform.rotation*Quaternion.Euler(removeMeshHelper.removeMeshBox.Rotation));
-        //Vector3 scale = Handles.ScaleHandle(removeMeshHelper.removeMeshBox.Size, Vector3.zero, Quaternion.identity, 1);
+        EditorGUI.BeginChangeCheck();//編集結果の保存に必要な関数
         
         Vector3 pos = removeMeshHelper.removeMeshBox.Center+removeMeshHelper.transform.position;
         Vector3 size = removeMeshHelper.removeMeshBox.Size;
         Quaternion rot = removeMeshHelper.transform.rotation*Quaternion.Euler(removeMeshHelper.removeMeshBox.Rotation);
          Handles.TransformHandle(ref pos,ref rot,ref size);
-        if (EditorGUI.EndChangeCheck())
+        if (EditorGUI.EndChangeCheck())//編集結果の保存に必要な関数
         {
             Undo.RecordObject(removeMeshHelper, "Change Look At Target Position");
             removeMeshHelper.removeMeshBox.Center = pos-removeMeshHelper.transform.position;
