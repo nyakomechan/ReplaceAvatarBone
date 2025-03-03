@@ -16,10 +16,14 @@ public class RemoveMeshHelperEditor : Editor
     RemoveMeshHelper removeMeshHelper;
     public override void OnInspectorGUI()
     {
-        EditorGUI.BeginChangeCheck();
+        EditorGUI.BeginChangeCheck();//編集結果の保存に必要な関数
 
         removeMeshHelper = (RemoveMeshHelper)target; // Inspectorに表示されているスクリプトのインスタンスを取得
         Transform rootTransform = GetRootTransform();
+
+        EditorGUI.LabelField("表示される箱の中のポリゴンを削除します。");
+        EditorGUI.LabelField("下で選択したSkinnedMeshRendererがポリゴン削除の対象になります。");
+        EditorGUI.LabelField(" ");
 
         isEditBoxMode = GUILayout.Toggle(isEditBoxMode,"ポリゴンの削除範囲を編集する");
         if (GUILayout.Button("削除した結果をプレビューする"))
@@ -71,11 +75,12 @@ public class RemoveMeshHelperEditor : Editor
         {
             EditorGUILayout.HelpBox("SkinnedMeshRendererを持つ子オブジェクトが見つかりませんでした。", MessageType.Info);
         }
-        if(EditorGUI.EndChangeCheck())
+        if(EditorGUI.EndChangeCheck())//編集結果の保存に必要な関数
         {
             EditorUtility.SetDirty(removeMeshHelper);
         }
-
+        EditorGUI.LabelField(" ");
+        EditorGUI.LabelField("注意：選択できるSkinnedMeshRendererはVRCAvatarDescripterを持つアバターの子のオブジェクトのみになります。");
         
 
     }

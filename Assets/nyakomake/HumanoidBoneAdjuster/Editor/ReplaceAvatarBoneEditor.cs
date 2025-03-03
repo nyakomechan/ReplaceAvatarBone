@@ -11,18 +11,26 @@ public class ReplaceAvatarBoneEditor : Editor
     {
         EditorGUI.BeginChangeCheck();
 
-        ReplaceAvatarBone replaceAvatarBone = (ReplaceAvatarBone)target; // Inspectorに表示されているスクリプトのインスタンスを取得
-        ModularAvatarBoneProxy modularAvatarBoneProxy = replaceAvatarBone.gameObject.GetComponent<ModularAvatarBoneProxy>(); // Inspectorに表示されているスクリプトのインスタンスを取得
-        //base.OnInspectorGUI(); // デフォルトのInspectorを表示
-        replaceAvatarBone.humanBodyBones = (HumanBodyBones)EditorGUILayout.EnumPopup( "置き換える対象のHumanoidBone", selected: (HumanBodyBones)replaceAvatarBone.humanBodyBones );
+        ReplaceAvatarBone replaceAvatarBone = (ReplaceAvatarBone)target;
+        ModularAvatarBoneProxy modularAvatarBoneProxy = replaceAvatarBone.gameObject.GetComponent<ModularAvatarBoneProxy>();
 
-        if(modularAvatarBoneProxy != null)
+        EditorGUI.LabelField("選択したHumanoidBone(UpperLeg_L等)をアタッチしたオブジェクトに疑似的に置き換えます。");
+        EditorGUI.LabelField(" ");
+
+        EditorGUI.LabelField("置き換える対象のHumanoidBoneを下のリストから選択してください。");
+        replaceAvatarBone.humanBodyBones = (HumanBodyBones)EditorGUILayout.EnumPopup("HumanoidBone", selected: (HumanBodyBones)replaceAvatarBone.humanBodyBones);
+
+        EditorGUI.LabelField(" ");
+        EditorGUI.LabelField("注意 : 一緒に追加されるMABoneProxyは削除または値の変更はしないでください。");
+
+
+        if (modularAvatarBoneProxy != null)
         {
             modularAvatarBoneProxy.boneReference = replaceAvatarBone.humanBodyBones;
             modularAvatarBoneProxy.attachmentMode = BoneProxyAttachmentMode.AsChildKeepWorldPose;
             modularAvatarBoneProxy.ResolveReferences();
         }
-        if(EditorGUI.EndChangeCheck())
+        if (EditorGUI.EndChangeCheck())
         {
             EditorUtility.SetDirty(replaceAvatarBone);
         }
