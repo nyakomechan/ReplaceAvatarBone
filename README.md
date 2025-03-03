@@ -29,6 +29,10 @@ AvatarOptimizerのRemoveMeshByBoxの設定補助用のコンポーネントに�
 アバターにより体のSkinnedMeshRendererのオブジェクト名が異なるため、衣装、義手義足アセットを導入するユーザー（アセットの購入者）側で導入時にポリゴンの削除を行うオブジェクトを選択する形を想定しています。
 * …説明追加予定
 
+## サンプルプレハブ
+
+ReplaceAvatarBone/Sample/sampleLeg.prefabがコンポーネント設定済みのサンプルのプレハブになります。
+導入する場合はアバター内に配置し、位置を調整した後、sampleLegのRemoveMeshHelperコンポーネントのインスペクタにて、体の干渉するポリゴンを削除するSkinnedMeshRendererを選択してください。
 
 ## 更新履歴
 2025/3/4 β版 
