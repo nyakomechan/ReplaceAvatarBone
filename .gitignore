@@ -81,4 +81,5 @@ crashlytics-build.properties
 !/Assets/nyakomake/
 /Assets/nyakomake/*
 !/Assets/nyakomake/HumanoidBoneAdjuster
+!/Assets/nyakomake/ReplaceAvatarBone
 /.vscode
