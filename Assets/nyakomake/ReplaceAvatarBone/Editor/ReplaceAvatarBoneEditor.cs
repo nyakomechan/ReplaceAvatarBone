@@ -17,8 +17,7 @@ public class ReplaceAvatarBoneEditor : Editor
         EditorGUILayout.LabelField("選択したHumanoidBone(UpperLeg_L等)をアタッチしたオブジェクトに疑似的に置き換えます。");
         EditorGUILayout.LabelField(" ");
 
-        EditorGUILayout.LabelField("置き換える対象のHumanoidBoneを下のリストから選択してください。");
-        replaceAvatarBone.humanBodyBones = (HumanBodyBones)EditorGUILayout.EnumPopup("HumanoidBone", selected: (HumanBodyBones)replaceAvatarBone.humanBodyBones);
+        replaceAvatarBone.humanBodyBones = (HumanBodyBones)EditorGUILayout.EnumPopup("置換え対象のHumanoidBone", selected: (HumanBodyBones)replaceAvatarBone.humanBodyBones);
 
         EditorGUILayout.LabelField(" ");
         EditorGUILayout.LabelField("注意 : 一緒に追加されるMABoneProxyは削除または値の変更はしないでください。");

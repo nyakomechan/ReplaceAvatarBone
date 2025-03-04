@@ -5,7 +5,7 @@ using System.Linq;
 using VRC.SDKBase;
 using Anatawa12.AvatarOptimizer;
 
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
 
 [CustomEditor(typeof(RemoveMeshHelper))] // MonoBehaviourを継承したスクリプトにアタッチできるようにする
 public class RemoveMeshHelperEditor : Editor
@@ -13,6 +13,7 @@ public class RemoveMeshHelperEditor : Editor
     private string[] skinnedMeshRendererNames;
     private SkinnedMeshRenderer[] skinnedMeshRenderers;
     private bool isEditBoxMode = true;
+    private bool isShowSettingsForCreator = false;
     RemoveMeshHelper removeMeshHelper;
     public override void OnInspectorGUI()
     {
@@ -24,19 +25,9 @@ public class RemoveMeshHelperEditor : Editor
         if (rootTransform != null)
         {
 
-            EditorGUILayout.LabelField("表示される箱の中のポリゴンを削除します。");
+            EditorGUILayout.LabelField("アバター内のメッシュについて表示される箱の中のポリゴンを削除します。");
             EditorGUILayout.LabelField("下のドロップダウンリストで選択したSkinnedMeshRendererがポリゴン削除の対象になります。");
             EditorGUILayout.LabelField(" ");
-        }
-
-        isEditBoxMode = GUILayout.Toggle(isEditBoxMode, "ポリゴンの削除範囲を編集する");
-        if (rootTransform != null)
-        {
-            if (GUILayout.Button("削除した結果をプレビューする"))
-            {
-                if (removeMeshHelper.attachObject != null) SetRemoveMeshBox(removeMeshHelper, removeMeshHelper.attachObject);
-                EditorUtility.SetDirty(removeMeshHelper);
-            }
 
 
             // SkinnedMeshRendererを持つ子オブジェクトを検索
@@ -88,6 +79,21 @@ public class RemoveMeshHelperEditor : Editor
         else
         {
             EditorGUILayout.LabelField("このコンポーネントを正しく動作させるには、アバター内に配置する必要があります。");
+        }
+
+        EditorGUILayout.LabelField(" ");
+        isShowSettingsForCreator = GUILayout.Toggle(isShowSettingsForCreator, "アセット製作者向けの設定を表示する");
+        if (isShowSettingsForCreator)
+        {
+            isEditBoxMode = GUILayout.Toggle(isEditBoxMode, "ポリゴンの削除範囲を編集する");
+            if (rootTransform != null)
+            {
+                if (GUILayout.Button("削除した結果をプレビューする"))
+                {
+                    if (removeMeshHelper.attachObject != null) SetRemoveMeshBox(removeMeshHelper, removeMeshHelper.attachObject);
+                    EditorUtility.SetDirty(removeMeshHelper);
+                }
+            }
         }
         if (EditorGUI.EndChangeCheck())//編集結果の保存に必要な関数
         {
