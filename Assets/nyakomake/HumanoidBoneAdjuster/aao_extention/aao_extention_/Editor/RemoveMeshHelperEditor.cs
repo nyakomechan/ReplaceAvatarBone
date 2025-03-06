@@ -13,7 +13,7 @@ public class RemoveMeshHelperEditor : Editor
     private string[] skinnedMeshRendererNames;
     private SkinnedMeshRenderer[] skinnedMeshRenderers;
     private bool isEditBoxMode = true;
-    private bool isShowSettingsForCreator = false;
+    //private bool isShowSettingsForCreator = false;
     RemoveMeshHelper removeMeshHelper;
     public override void OnInspectorGUI()
     {
