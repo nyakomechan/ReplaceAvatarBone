@@ -5,7 +5,7 @@ using System.Linq;
 using VRC.SDKBase;
 using Anatawa12.AvatarOptimizer;
 
-//#if UNITY_EDITOR
+#if UNITY_EDITOR
 
 [CustomEditor(typeof(RemoveMeshHelper))] // MonoBehaviourを継承したスクリプトにアタッチできるようにする
 public class RemoveMeshHelperEditor : Editor
@@ -81,10 +81,7 @@ public class RemoveMeshHelperEditor : Editor
             EditorGUILayout.LabelField("このコンポーネントを正しく動作させるには、アバター内に配置する必要があります。");
         }
 
-        EditorGUILayout.LabelField(" ");
-        isShowSettingsForCreator = GUILayout.Toggle(isShowSettingsForCreator, "アセット製作者向けの設定を表示する");
-        if (isShowSettingsForCreator)
-        {
+
             isEditBoxMode = GUILayout.Toggle(isEditBoxMode, "ポリゴンの削除範囲を編集する");
             if (rootTransform != null)
             {
@@ -94,7 +91,7 @@ public class RemoveMeshHelperEditor : Editor
                     EditorUtility.SetDirty(removeMeshHelper);
                 }
             }
-        }
+
         if (EditorGUI.EndChangeCheck())//編集結果の保存に必要な関数
         {
             EditorUtility.SetDirty(removeMeshHelper);
