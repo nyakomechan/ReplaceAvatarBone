@@ -78,14 +78,17 @@ public class RemoveMeshHelperEditor : Editor
         }
         else
         {
-            EditorGUILayout.LabelField("このコンポーネントを正しく動作させるには、アバター内に配置する必要があります。");
+            EditorGUILayout.HelpBox("このコンポーネントを正しく動作させるには、アバター内に配置する必要があります。", MessageType.Warning);
+            if (removeMeshHelper.removeMeshInBox != null) Undo.DestroyObjectImmediate(removeMeshHelper.removeMeshInBox);
         }
-
+            EditorGUILayout.LabelField(" ");
 
             isEditBoxMode = GUILayout.Toggle(isEditBoxMode, "ポリゴンの削除範囲を編集する");
+            
             if (rootTransform != null)
             {
-                if (GUILayout.Button("削除した結果をプレビューする"))
+                EditorGUILayout.HelpBox("アタッチしているオブジェクトを移動させたり、削除範囲を編集した時は以下ボタンを押してください", MessageType.Info);
+                if (GUILayout.Button("削除範囲の変更を適用する"))
                 {
                     if (removeMeshHelper.attachObject != null) SetRemoveMeshBox(removeMeshHelper, removeMeshHelper.attachObject);
                     EditorUtility.SetDirty(removeMeshHelper);
