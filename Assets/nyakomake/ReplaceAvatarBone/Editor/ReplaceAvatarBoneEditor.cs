@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using nadena.dev.modular_avatar.core;
-using VeryAnimation;
+
 [CustomEditor(typeof(ReplaceAvatarBone)), CanEditMultipleObjects]
 public class ReplaceAvatarBoneEditor : Editor
 {

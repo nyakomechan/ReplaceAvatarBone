@@ -49,18 +49,22 @@ namespace nyakomake
 
             Transform boneTransform = animator.GetBoneTransform(humanBodyBones);
 
-            if (adjustType == AdjustType.RotationOnly)
+            if (boneTransform != null)
             {
-                boneTransform.rotation = new Quaternion(transform.rotation.x,transform.rotation.y,transform.rotation.z,transform.rotation.w);
-            }
-            if (adjustType == AdjustType.PositionOnly)
-            {
-                boneTransform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z);
-            }
-            else
-            {
-                boneTransform.rotation = new Quaternion(transform.rotation.x,transform.rotation.y,transform.rotation.z,transform.rotation.w);
-                boneTransform.position = new Vector3(transform.position.x,transform.position.y,transform.position.z);
+
+                if (adjustType == AdjustType.RotationOnly)
+                {
+                    boneTransform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
+                }
+                if (adjustType == AdjustType.PositionOnly)
+                {
+                    boneTransform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+                }
+                else
+                {
+                    boneTransform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
+                    boneTransform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+                }
             }
 
             //Debug.Log("adjustBone : " + boneTransform.name);
@@ -82,7 +86,7 @@ namespace nyakomake
         }
         void RevertPosRotTransform(Transform revertTransform)
         {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             SerializedObject serializedObject = new SerializedObject(revertTransform);
             SerializedProperty sp = serializedObject.FindProperty("m_LocalPosition");
             sp.prefabOverride = false;
@@ -90,7 +94,7 @@ namespace nyakomake
             sp = serializedObject.FindProperty("m_LocalRotation");
             sp.prefabOverride = false;
             sp.serializedObject.ApplyModifiedProperties();
-            #endif
+#endif
         }
     }
 }

@@ -12,8 +12,8 @@ public class RemoveMeshHelperEditor : Editor
 {
     private string[] skinnedMeshRendererNames;
     private SkinnedMeshRenderer[] skinnedMeshRenderers;
-    private bool isEditBoxMode = true;
-    //private bool isShowSettingsForCreator = false;
+    private bool isEditBoxMode = false;
+    private uint count = 0;
     RemoveMeshHelper removeMeshHelper;
     public override void OnInspectorGUI()
     {
@@ -25,8 +25,7 @@ public class RemoveMeshHelperEditor : Editor
         if (rootTransform != null)
         {
 
-            EditorGUILayout.LabelField("アバター内のメッシュについて表示される箱の中のポリゴンを削除します。");
-            EditorGUILayout.LabelField("下のドロップダウンリストで選択したSkinnedMeshRendererがポリゴン削除の対象になります。");
+            EditorGUILayout.HelpBox("アバター内のメッシュについて表示される箱の中のポリゴンを削除します。\n下のドロップダウンリストで選択したSkinnedMeshRendererがポリゴン削除の対象になります。", MessageType.None);
             EditorGUILayout.LabelField(" ");
 
 
@@ -74,26 +73,31 @@ public class RemoveMeshHelperEditor : Editor
                 EditorGUILayout.HelpBox("SkinnedMeshRendererを持つ子オブジェクトが見つかりませんでした。", MessageType.Info);
             }
             EditorGUILayout.LabelField(" ");
-            EditorGUILayout.LabelField("注意：選択できるSkinnedMeshRendererはアバター内のオブジェクトのもののみになります。");
+            EditorGUILayout.HelpBox("注意：選択できるSkinnedMeshRendererはアバター内のオブジェクトのもののみになります。", MessageType.Info);
         }
         else
         {
             EditorGUILayout.HelpBox("このコンポーネントを正しく動作させるには、アバター内に配置する必要があります。", MessageType.Warning);
-            if (removeMeshHelper.removeMeshInBox != null) Undo.DestroyObjectImmediate(removeMeshHelper.removeMeshInBox);
         }
-            EditorGUILayout.LabelField(" ");
+
+        EditorGUILayout.LabelField(" ");
+        if (rootTransform != null)
+        {
+            // if (GUILayout.Button("ポリゴンを削除した表示を更新する"))
+            // {
+            //     if (removeMeshHelper.attachObject != null) SetRemoveMeshBox(removeMeshHelper, removeMeshHelper.attachObject);
+            //     EditorUtility.SetDirty(removeMeshHelper);
+            // }
+            count++;
+            if(count % 5 == 0)
+            {
+                if (removeMeshHelper.attachObject != null) SetRemoveMeshBox(removeMeshHelper, removeMeshHelper.attachObject);
+                EditorUtility.SetDirty(removeMeshHelper);
+            }
+        }
 
             isEditBoxMode = GUILayout.Toggle(isEditBoxMode, "ポリゴンの削除範囲を編集する");
-            
-            if (rootTransform != null)
-            {
-                EditorGUILayout.HelpBox("アタッチしているオブジェクトを移動させたり、削除範囲を編集した時は以下ボタンを押してください", MessageType.Info);
-                if (GUILayout.Button("削除範囲の変更を適用する"))
-                {
-                    if (removeMeshHelper.attachObject != null) SetRemoveMeshBox(removeMeshHelper, removeMeshHelper.attachObject);
-                    EditorUtility.SetDirty(removeMeshHelper);
-                }
-            }
+
 
         if (EditorGUI.EndChangeCheck())//編集結果の保存に必要な関数
         {
@@ -101,6 +105,11 @@ public class RemoveMeshHelperEditor : Editor
         }
 
 
+
+    }
+
+    void EditorUpdate()
+    {
 
     }
 
@@ -192,6 +201,7 @@ public class RemoveMeshHelperEditor : Editor
         Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
         Debug.Log("OnDrawGizmosSelected");
     }
+
 
     //ポリゴンを削除する箱状の範囲をエディタ上で編集するハンドルを表示する
     protected virtual void OnSceneGUI()

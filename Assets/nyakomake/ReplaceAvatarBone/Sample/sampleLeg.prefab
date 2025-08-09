@@ -213,8 +213,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8093929647214304758}
-  - component: {fileID: 6267703354915682291}
-  - component: {fileID: 3471321868403142278}
+  - component: {fileID: 8540730176010700084}
+  - component: {fileID: 2383772195996504385}
   m_Layer: 0
   m_Name: Bone.001
   m_TagString: Untagged
@@ -238,23 +238,7 @@ Transform:
   - {fileID: 6883324582867037333}
   m_Father: {fileID: 4308098206993501078}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6267703354915682291
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1380029821678331078}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30c215ac93035f64084caac3d45078ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rootObject: {fileID: 0}
-  humanBodyBones: 4
-  refPosRotTransform: {fileID: 8093929647214304758}
-  adjustType: 0
---- !u!114 &3471321868403142278
+--- !u!114 &8540730176010700084
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -269,6 +253,22 @@ MonoBehaviour:
   boneReference: 4
   subPath: 
   attachmentMode: 2
+--- !u!114 &2383772195996504385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1380029821678331078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f61ae3e81eb00b459aba7af65996509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rootObject: {fileID: 0}
+  humanBodyBones: 4
+  refPosRotTransform: {fileID: 8093929647214304758}
+  adjustType: 0
 --- !u!1 &1742757451635848941
 GameObject:
   m_ObjectHideFlags: 0
@@ -317,7 +317,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attachObject: {fileID: 0}
   removeMeshInBox: {fileID: 0}
-  selectNum: 0
+  selectNum: 1
   removeMeshBox:
     Center: {x: 0, y: 0.17914459, z: 0}
     Size: {x: 1, y: 1, z: 1}
@@ -397,8 +397,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3944453056139756302}
-  - component: {fileID: 4396786568941878158}
-  - component: {fileID: 36942825053306400}
+  - component: {fileID: 934150433727644018}
+  - component: {fileID: 1807031242793516634}
   m_Layer: 0
   m_Name: Bone.003
   m_TagString: Untagged
@@ -422,23 +422,7 @@ Transform:
   - {fileID: 1086046133727001288}
   m_Father: {fileID: 6883324582867037333}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4396786568941878158
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4900681320557593756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30c215ac93035f64084caac3d45078ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rootObject: {fileID: 0}
-  humanBodyBones: 20
-  refPosRotTransform: {fileID: 3944453056139756302}
-  adjustType: 0
---- !u!114 &36942825053306400
+--- !u!114 &934150433727644018
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -453,6 +437,22 @@ MonoBehaviour:
   boneReference: 20
   subPath: 
   attachmentMode: 2
+--- !u!114 &1807031242793516634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4900681320557593756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f61ae3e81eb00b459aba7af65996509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rootObject: {fileID: 0}
+  humanBodyBones: 20
+  refPosRotTransform: {fileID: 3944453056139756302}
+  adjustType: 0
 --- !u!1 &5022826756766772268
 GameObject:
   m_ObjectHideFlags: 0
@@ -575,7 +575,7 @@ Transform:
   m_GameObject: {fileID: 5690383128144262431}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.1, y: -0.046, z: -0.02}
+  m_LocalPosition: {x: -0.072, y: -0.046, z: -0.02}
   m_LocalScale: {x: 1.4870954, y: 1.4870954, z: 1.4870954}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -608,7 +608,7 @@ Transform:
   m_GameObject: {fileID: 5957064543942128483}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.1, y: -0.046, z: -0.02}
+  m_LocalPosition: {x: 0.072, y: -0.046, z: -0.02}
   m_LocalScale: {x: 1.4870954, y: 1.4870954, z: 1.4870954}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -923,8 +923,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6883324582867037333}
-  - component: {fileID: 6300283571305005708}
-  - component: {fileID: 8642000150158779253}
+  - component: {fileID: 8589388578414420688}
+  - component: {fileID: 5314866123210259444}
   m_Layer: 0
   m_Name: Bone.002
   m_TagString: Untagged
@@ -948,23 +948,7 @@ Transform:
   - {fileID: 3944453056139756302}
   m_Father: {fileID: 8093929647214304758}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6300283571305005708
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9193666204975819994}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30c215ac93035f64084caac3d45078ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rootObject: {fileID: 0}
-  humanBodyBones: 6
-  refPosRotTransform: {fileID: 6883324582867037333}
-  adjustType: 0
---- !u!114 &8642000150158779253
+--- !u!114 &8589388578414420688
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -979,3 +963,19 @@ MonoBehaviour:
   boneReference: 6
   subPath: 
   attachmentMode: 2
+--- !u!114 &5314866123210259444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9193666204975819994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f61ae3e81eb00b459aba7af65996509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rootObject: {fileID: 0}
+  humanBodyBones: 6
+  refPosRotTransform: {fileID: 6883324582867037333}
+  adjustType: 0
