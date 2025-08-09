@@ -43,3 +43,4 @@ ReplaceAvatarBone/Sample/sampleLeg.prefabがコンポーネント設定済みの
 
 ## 更新履歴
 2025/3/4 β版 
+2025/8/9 ToeなどHumanoid Avatarで必須ではないボーンを使っていないアバターでエラーが発生していたのを修正
