@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using VRC.SDKBase;
 using Anatawa12.AvatarOptimizer;
+using HarmonyLib;
+using System;
+using System.Text.RegularExpressions;
 
 #if UNITY_EDITOR
 
@@ -15,6 +18,7 @@ public class RemoveMeshHelperEditor : Editor
     private bool isEditBoxMode = false;
     private uint count = 0;
     RemoveMeshHelper removeMeshHelper;
+
     public override void OnInspectorGUI()
     {
         EditorGUI.BeginChangeCheck();//編集結果の保存に必要な関数
@@ -34,12 +38,14 @@ public class RemoveMeshHelperEditor : Editor
 
             // ドロップダウンリストに表示する名前を作成
             skinnedMeshRendererNames = skinnedMeshRenderers.Select(renderer => renderer.gameObject.name).ToArray();
-
+            //Array.Resize(ref skinnedMeshRendererNames, skinnedMeshRendererNames.Length + 1);
+            //skinnedMeshRendererNames[skinnedMeshRendererNames.Length - 1] = "none";
+            skinnedMeshRendererNames = skinnedMeshRendererNames.Prepend("none").ToArray();
             // SkinnedMeshRendererが存在する場合のみドロップダウンリストを表示
             if (skinnedMeshRendererNames.Length > 0)
             {
                 // 現在選択されているSkinnedMeshRendererのIndexを検索
-                if (skinnedMeshRenderers.Length > 0 && removeMeshHelper.selectNum >= skinnedMeshRenderers.Length)
+                if (skinnedMeshRenderers.Length > 0 && removeMeshHelper.selectNum >= skinnedMeshRenderers.Length + 1)
                 {
                     removeMeshHelper.selectNum = 0; // 範囲外の場合、最初の要素を選択
                 }
@@ -51,18 +57,32 @@ public class RemoveMeshHelperEditor : Editor
                     removeMeshHelper.selectNum = newSelectNum;
                     if (removeMeshHelper.removeMeshInBox != null) Undo.DestroyObjectImmediate(removeMeshHelper.removeMeshInBox);
 
-                    SkinnedMeshRenderer selectedRenderer = skinnedMeshRenderers[removeMeshHelper.selectNum];
-                    removeMeshHelper.attachObject = selectedRenderer.gameObject;
-                    Debug.Log(message: "Selected SkinnedMeshRenderer: " + selectedRenderer.gameObject.name);
-                    SetRemoveMeshBox(removeMeshHelper, selectedRenderer.gameObject);
+                    if (removeMeshHelper.selectNum != 0)
+                    {
+                        SkinnedMeshRenderer selectedRenderer = skinnedMeshRenderers[removeMeshHelper.selectNum-1];
+                        removeMeshHelper.attachObject = selectedRenderer.gameObject;
+                        Debug.Log(message: "Selected SkinnedMeshRenderer: " + selectedRenderer.gameObject.name);
+                        SetRemoveMeshBox(removeMeshHelper, selectedRenderer.gameObject);
+                        //EditorUtility.SetDirty(removeMeshHelper);
+                    }
                     EditorUtility.SetDirty(removeMeshHelper);
                 }
-                else if (removeMeshHelper.removeMeshInBox == null)
+                else if (removeMeshHelper.removeMeshInBox == null && newSelectNum != 0)
                 {
-                    SkinnedMeshRenderer selectedRenderer = skinnedMeshRenderers[removeMeshHelper.selectNum];
-                    removeMeshHelper.attachObject = selectedRenderer.gameObject;
-                    Debug.Log(message: "Selected SkinnedMeshRenderer: " + selectedRenderer.gameObject.name);
-                    SetRemoveMeshBox(removeMeshHelper, selectedRenderer.gameObject);
+                    if (removeMeshHelper.selectNum != 0)
+                    {
+                        SkinnedMeshRenderer selectedRenderer = skinnedMeshRenderers[removeMeshHelper.selectNum-1];
+                        removeMeshHelper.attachObject = selectedRenderer.gameObject;
+                        Debug.Log(message: "Selected SkinnedMeshRenderer: " + selectedRenderer.gameObject.name);
+                        SetRemoveMeshBox(removeMeshHelper, selectedRenderer.gameObject);
+                    }
+                    EditorUtility.SetDirty(removeMeshHelper);
+                }
+                else if (newSelectNum == 0)
+                {
+                    removeMeshHelper.selectNum = 0;
+                    if (removeMeshHelper.removeMeshInBox != null) Undo.DestroyObjectImmediate(removeMeshHelper.removeMeshInBox);
+                    EditorUtility.SetDirty(removeMeshHelper);
                 }
 
 
@@ -77,6 +97,8 @@ public class RemoveMeshHelperEditor : Editor
         }
         else
         {
+            if (removeMeshHelper.removeMeshInBox != null) Undo.DestroyObjectImmediate(removeMeshHelper.removeMeshInBox);
+            EditorUtility.SetDirty(removeMeshHelper);
             EditorGUILayout.HelpBox("このコンポーネントを正しく動作させるには、アバター内に配置する必要があります。", MessageType.Warning);
         }
 
@@ -89,14 +111,17 @@ public class RemoveMeshHelperEditor : Editor
             //     EditorUtility.SetDirty(removeMeshHelper);
             // }
             count++;
-            if(count % 5 == 0)
+            if (count % 5 == 0)
             {
-                if (removeMeshHelper.attachObject != null) SetRemoveMeshBox(removeMeshHelper, removeMeshHelper.attachObject);
-                EditorUtility.SetDirty(removeMeshHelper);
+                if (removeMeshHelper.selectNum != 0)
+                {
+                    if (removeMeshHelper.attachObject != null) SetRemoveMeshBox(removeMeshHelper, removeMeshHelper.attachObject);
+                    EditorUtility.SetDirty(removeMeshHelper);
+                }
             }
         }
 
-            isEditBoxMode = GUILayout.Toggle(isEditBoxMode, "ポリゴンの削除範囲を編集する");
+        isEditBoxMode = GUILayout.Toggle(isEditBoxMode, "ポリゴンの削除範囲を編集する");
 
 
         if (EditorGUI.EndChangeCheck())//編集結果の保存に必要な関数
@@ -106,6 +131,11 @@ public class RemoveMeshHelperEditor : Editor
 
 
 
+    }
+    void OnHierarchyChange()
+    {
+        removeMeshHelper = (RemoveMeshHelper)target; // Inspectorに表示されているスクリプトのインスタンスを取得
+        if (removeMeshHelper.removeMeshInBox != null) Undo.DestroyObjectImmediate(removeMeshHelper.removeMeshInBox);
     }
 
     void EditorUpdate()

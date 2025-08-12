@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using Anatawa12.AvatarOptimizer;
 using UnityEngine.EventSystems;
+using VRC.SDKBase;
 [ExecuteAlways]
 public class RemoveMeshHelper : MonoBehaviour, VRC.SDKBase.IEditorOnly
 {
@@ -23,11 +24,57 @@ public class RemoveMeshHelper : MonoBehaviour, VRC.SDKBase.IEditorOnly
 
     void Reset()
     {
-        removeMeshBox.Center = new Vector3(0,1f,0);
+        removeMeshBox.Center = new Vector3(0, 1f, 0);
         removeMeshBox.Size = Vector3.one;
         removeMeshBox.Rotation = Vector3.zero;
     }
 
+    [SerializeField] string targetObjectName = "TargetGameObject";
+
+    void OnEnable()
+    {
+        // Hierarchy変更イベント購読
+        EditorApplication.hierarchyChanged += OnHierarchyChanged;
+    }
+
+    void OnDisable()
+    {
+        // イベント購読解除
+        EditorApplication.hierarchyChanged -= OnHierarchyChanged;
+
+    }
+
+    private void OnHierarchyChanged()
+    {
+        if (!Application.isPlaying)
+        {
+            var rootObj = GetRootTransform();
+            if (rootObj == null)
+            {
+                if (removeMeshInBox != null) Undo.DestroyObjectImmediate(removeMeshInBox);
+            }
+        }
+    }
+    Transform GetRootTransform()
+    {
+        var rootObject = transform;
+        while (rootObject != null)
+        {
+            if (rootObject.GetComponent<VRC_AvatarDescriptor>() != null) break;
+            rootObject = rootObject.transform.parent;
+        }
+        return rootObject;
+    }
+
+    void OnDestroy()
+    {
+        if (!Application.isPlaying)
+        {
+
+            if (removeMeshInBox != null) Undo.DestroyObjectImmediate(removeMeshInBox);
+
+        }
+    }
 
 
 
