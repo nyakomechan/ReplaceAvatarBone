@@ -29,7 +29,6 @@ public class RemoveMeshHelper : MonoBehaviour, VRC.SDKBase.IEditorOnly
         removeMeshBox.Rotation = Vector3.zero;
     }
 
-    [SerializeField] string targetObjectName = "TargetGameObject";
 
     void OnEnable()
     {

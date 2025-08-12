@@ -96,12 +96,12 @@ PrefabInstance:
     - target: {fileID: 2669907135989085963, guid: 07acada895588fa4781285917732bab4,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.0465
+      value: -0.2117674
       objectReference: {fileID: 0}
     - target: {fileID: 2669907135989085963, guid: 07acada895588fa4781285917732bab4,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.0011
+      value: -0.0011000393
       objectReference: {fileID: 0}
     - target: {fileID: 2669907135989085963, guid: 07acada895588fa4781285917732bab4,
         type: 3}
@@ -126,12 +126,12 @@ PrefabInstance:
     - target: {fileID: 2693816875505227938, guid: 07acada895588fa4781285917732bab4,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.0448
+      value: 0.2100674
       objectReference: {fileID: 0}
     - target: {fileID: 2693816875505227938, guid: 07acada895588fa4781285917732bab4,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.0011
+      value: -0.0011000393
       objectReference: {fileID: 0}
     - target: {fileID: 2693816875505227938, guid: 07acada895588fa4781285917732bab4,
         type: 3}
@@ -436,7 +436,6 @@ MonoBehaviour:
     Center: {x: 0, y: -0.6556349, z: 0.02372801}
     Size: {x: 1, y: 1, z: 1}
     Rotation: {x: -0, y: 0, z: 0}
-  targetObjectName: TargetGameObject
 --- !u!1 &5020196137732138046 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8499884228886914860, guid: 07acada895588fa4781285917732bab4,
